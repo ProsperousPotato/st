@@ -5,8 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "mono:pixelsize=12:antialias=true:autohint=true";
-static char *font2[] = { "inconsolata-mono-nerd:pixelsize=10:antialias=true:autohint=true" };
+static char *font = "cozette:pixelsize=12:antialias=true:autohint=true";
+static char *font2[] = { "" };
 static int borderpx = 0;
 
 /*
@@ -14,7 +14,7 @@ static int borderpx = 0;
  * 1: program passed with -e
  * 2: scroll and/or utmp
  * 3: SHELL environment variable
- * 4: value of shell in /etc/passwd
+ * ffffffue of shell in /etc/passwd
  * 5: value of shell in config.h
  */
 static char *shell = "/bin/sh";
@@ -107,9 +107,9 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.8;
-float alphaOffset = 0.0;
-float alphaUnfocus;
+float alpha = 0.6;
+float alphaOffset = 0.6;
+float alphaUnfocus = 0.6;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -131,10 +131,10 @@ static const char *colorname[] = {
 	"#ebdbb2",
 	[255] = 0,
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#add8e6", /* 256 -> cursor */
+	"#ffffff", /* 256 -> cursor */
 	"#555555", /* 257 -> rev cursor*/
 	"#000000", /* 258 -> bg */
-	"#ebdbb2", /* 259 -> fg */
+	"#ffffff", /* 259 -> fg */
 };
 
 
