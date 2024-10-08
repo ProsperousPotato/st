@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char *font = "cozette:pixelsize=12:antialias=true:autohint=true";
-static char *font2[] = { "" };
+static char *font2[] = {  "cozette:pixelsize=12:antialias=true:autohint=true" };
 static int borderpx = 0;
 
 /*
@@ -75,7 +75,7 @@ static unsigned int cursorthickness = 2;
  * 0: disable (render all U25XX glyphs normally from the font).
  */
 const int boxdraw = 1;
-const int boxdraw_bold = 0;
+const int boxdraw_bold = 1;
 
 /* braille (U28XX):  1: render as adjacent "pixels",  0: use font */
 const int boxdraw_braille = 0;
@@ -108,8 +108,8 @@ unsigned int tabspaces = 8;
 
 /* bg opacity */
 float alpha = 0.6;
-float alphaOffset = 0.6;
-float alphaUnfocus = 0.6;
+float alphaOffset = 0;
+float alphaUnfocus = 0;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -161,8 +161,8 @@ static unsigned int cursorshape = 2;
  * Default columns and rows numbers
  */
 
-static unsigned int cols = 80;
-static unsigned int rows = 24;
+static unsigned int cols = 200;
+static unsigned int rows = 55;
 
 /*
  * Default colour and shape of the mouse cursor
