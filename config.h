@@ -5,8 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "cozette:pixelsize=12:antialias=true:autohint=true";
-static char *font2[] = {  "cozette:pixelsize=12:antialias=true:autohint=true" };
+static char *font = "Terminus:pixelsize=12:antialias=true:autohint=true";
+static char *font2[] = {  "Terminus:pixelsize=12:antialias=true:autohint=true" };
 static int borderpx = 0;
 
 int disablebold = 1;
@@ -64,7 +64,7 @@ static double maxlatency = 33;
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 800;
+static unsigned int blinktimeout = 1;
 
 /*
  * thickness of underline and bar cursors
@@ -110,7 +110,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.6;
+float alpha = 0.8;
 float alphaOffset = 0;
 float alphaUnfocus = 0;
 
