@@ -2,11 +2,14 @@
 
 /*
  * appearance
+static char *font = "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true";
+static char *font2[] = {  "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true" };
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "cozette:pixelsize=12:antialias=true:autohint=true";
-static char *font2[] = {  "cozette:pixelsize=12:antialias=true:autohint=true" };
+
+static char *font = "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true";
+static char *font2[] = {  "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true" };
 static int borderpx = 0;
 
 int disablebold = 1;
@@ -17,10 +20,10 @@ int disableroman = 1;
  * 1: program passed with -e
  * 2: scroll and/or utmp
  * 3: SHELL environment variable
- * ffffffue of shell in /etc/passwd
+ * 4: value of shell in /etc/passwd
  * 5: value of shell in config.h
  */
-static char *shell = "/bin/sh";
+static char *shell = "/bin/zsh";
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
 char *scroll = NULL;
@@ -64,7 +67,7 @@ static double maxlatency = 33;
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 800;
+static unsigned int blinktimeout = 1;
 
 /*
  * thickness of underline and bar cursors
@@ -110,7 +113,7 @@ char *termname = "st-256color";
 unsigned int tabspaces = 8;
 
 /* bg opacity */
-float alpha = 0.6;
+float alpha = 0.8;
 float alphaOffset = 0;
 float alphaUnfocus = 0;
 
@@ -164,8 +167,8 @@ static unsigned int cursorshape = 2;
  * Default columns and rows numbers
  */
 
-static unsigned int cols = 200;
-static unsigned int rows = 55;
+static unsigned int cols = 130;
+static unsigned int rows = 41;
 
 /*
  * Default colour and shape of the mouse cursor
@@ -275,8 +278,8 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_Down,        kscrolldown,    {.i =  1} },
 	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
 	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
-	{ MODKEY,		XK_s,		changealpha,	{.f = -0.05} },
-	{ MODKEY,		XK_a,		changealpha,	{.f = +0.05} },
+	{ MODKEY,		        XK_a,   		changealpha,	{.f = -0.05} },
+	{ MODKEY,		        XK_s,   		changealpha,	{.f = +0.05} },
 	{ TERMMOD,              XK_Up,          zoom,           {.f = +1} },
 	{ TERMMOD,              XK_Down,        zoom,           {.f = -1} },
 	{ TERMMOD,              XK_K,           zoom,           {.f = +1} },
