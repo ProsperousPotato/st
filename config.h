@@ -8,8 +8,8 @@ static char *font2[] = {  "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autoh
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 
-static char *font = "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true";
-static char *font2[] = {  "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true" };
+static char *font = "Bm437 IBM VGA 8x16:pixelsize=16";
+static char *font2[] = {  "Bm437 IBM VGA 8x16:pixelsize=16" };
 static int borderpx = 0;
 
 int disablebold = 1;
