@@ -2,19 +2,25 @@
 
 /*
  * appearance
-static char *font = "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true";
-static char *font2[] = {  "BigBlueTerm437NerdFontMono-Regular:pixelsize=12:autohint=true" };
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
+static char *font = "Terminess Nerd Font Mono:pixelsize=14:antialias=true:autohint=true";
 
-static char *font = "Bm437 IBM VGA 8x16:pixelsize=16";
-static char *font2[] = {  "Bm437 IBM VGA 8x16:pixelsize=16" };
-static int borderpx = 0;
-
+/* disable bold, italic and roman fonts globally */
 int disablebold = 1;
 int disableitalic = 1;
 int disableroman = 1;
+
+static int borderpx = 0;
+
+/* How to align the content in the window when the size of the terminal
+ * doesn't perfectly match the size of the window. The values are percentages.
+ * 50 means center, 0 means flush left/top, 100 means flush right/bottom.
+ */
+static int anysize_halign = 50;
+static int anysize_valign = 50;
+
 /*
  * What program is execed by st depends of these precedence rules:
  * 1: program passed with -e
@@ -23,14 +29,15 @@ int disableroman = 1;
  * 4: value of shell in /etc/passwd
  * 5: value of shell in config.h
  */
-static char *shell = "/bin/zsh";
+static char *shell = "/bin/sh";
 char *utmp = NULL;
 /* scroll program: to enable use a string like "scroll" */
 char *scroll = NULL;
 char *stty_args = "stty raw pass8 nl -echo -iexten -cstopb 38400";
 
 /* identification sequence returned in DA and DECID */
-char *vtiden = "\033[?6c";
+/* By default, use the same one as kitty. */
+char *vtiden = "\033[?62c";
 
 /* Kerning / character bounding-box multipliers */
 static float cwscale = 1.0;
@@ -60,31 +67,19 @@ int allowwindowops = 0;
  * near minlatency, but it waits longer for slow updates to avoid partial draw.
  * low minlatency will tear/flicker more, as it can "detect" idle too early.
  */
-static double minlatency = 8;
+static double minlatency = 2;
 static double maxlatency = 33;
 
 /*
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 1;
+static unsigned int blinktimeout = 800;
 
 /*
  * thickness of underline and bar cursors
  */
 static unsigned int cursorthickness = 2;
-
-/*
- * 1: render most of the lines/blocks characters without using the font for
- *    perfect alignment between cells (U2500 - U259F except dashes/diagonals).
- *    Bold affects lines thickness if boxdraw_bold is not 0. Italic is ignored.
- * 0: disable (render all U25XX glyphs normally from the font).
- */
-const int boxdraw = 1;
-const int boxdraw_bold = 1;
-
-/* braille (U28XX):  1: render as adjacent "pixels",  0: use font */
-const int boxdraw_braille = 0;
 
 /*
  * bell volume. It must be a value between -100 and 100. Use 0 for disabling
@@ -114,33 +109,39 @@ unsigned int tabspaces = 8;
 
 /* bg opacity */
 float alpha = 0.8;
-float alphaOffset = 0;
-float alphaUnfocus = 0;
+
+/* Background opacity */
+float alpha_def;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-	"#282a36", /* hard contrast: #1d2021 / soft contrast: #32302f */
-	"#44475a",
-	"#f44747",
-	"#ff5555",
-	"#50fa7b",
-	"#69ff94",
-	"#f1fa8c",
-	"#f4f99d",
-	"#6272a4",
-	"#8be9fd",
-	"#ff79c6",
-	"#ff92d0",
-	"#8be9fd",
-	"#a4ffff",
-	"#f8f8f2",
-	"#ffffff",
+	/* 8 normal colors */
+	"black",
+	"red3",
+	"green3",
+	"yellow3",
+	"blue2",
+	"magenta3",
+	"cyan3",
+	"gray90",
+
+	/* 8 bright colors */
+	"gray50",
+	"red",
+	"green",
+	"yellow",
+	"#5c5cff",
+	"magenta",
+	"cyan",
+	"white",
+
 	[255] = 0,
+
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#ffffff", /* 256 -> cursor */
-	"#555555", /* 257 -> rev cursor*/
-	"#000000", /* 258 -> bg */
-	"#ffffff", /* 259 -> fg */
+	"#cccccc",
+	"#555555",
+	"gray90", /* default foreground colour */
+	"black", /* default background colour */
 };
 
 
@@ -148,11 +149,10 @@ static const char *colorname[] = {
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-unsigned int defaultfg = 259;
-unsigned int defaultbg = 258;
+unsigned int defaultfg = 258;
+unsigned int defaultbg = 259;
 unsigned int defaultcs = 256;
-unsigned int defaultrcs = 257;
-unsigned int background = 258;
+static unsigned int defaultrcs = 257;
 
 /*
  * Default shape of cursor
@@ -184,50 +184,37 @@ static unsigned int mousebg = 0;
 static unsigned int defaultattr = 11;
 
 /*
+ * Graphics configuration
+ */
+
+/// The template for the cache directory.
+const char graphics_cache_dir_template[] = "/tmp/st-images-XXXXXX";
+/// The max size of a single image file, in bytes.
+unsigned graphics_max_single_image_file_size = 20 * 1024 * 1024;
+/// The max size of the cache, in bytes.
+unsigned graphics_total_file_cache_size = 300 * 1024 * 1024;
+/// The max ram size of an image or placement, in bytes.
+unsigned graphics_max_single_image_ram_size = 100 * 1024 * 1024;
+/// The max total size of all images loaded into RAM.
+unsigned graphics_max_total_ram_size = 300 * 1024 * 1024;
+/// The max total number of image placements and images.
+unsigned graphics_max_total_placements = 4096;
+/// The ratio by which limits can be exceeded. This is to reduce the frequency
+/// of image removal.
+double graphics_excess_tolerance_ratio = 0.05;
+/// The minimum delay between redraws caused by animations, in milliseconds.
+unsigned graphics_animation_min_delay = 20;
+
+/*
  * Force mouse select/shortcuts while mask is active (when MODE_MOUSE is set).
  * Note that if you want to use ShiftMask with selmasks, set this to an other
  * modifier, set to 0 to not use it.
  */
 static uint forcemousemod = ShiftMask;
 
-/*
- * Xresources preferences to load at startup
- */
-ResourcePref resources[] = {
-		{ "font",         STRING,  &font },
-		{ "fontalt0",     STRING,  &font2[0] },
-		{ "color0",       STRING,  &colorname[0] },
-		{ "color1",       STRING,  &colorname[1] },
-		{ "color2",       STRING,  &colorname[2] },
-		{ "color3",       STRING,  &colorname[3] },
-		{ "color4",       STRING,  &colorname[4] },
-		{ "color5",       STRING,  &colorname[5] },
-		{ "color6",       STRING,  &colorname[6] },
-		{ "color7",       STRING,  &colorname[7] },
-		{ "color8",       STRING,  &colorname[8] },
-		{ "color9",       STRING,  &colorname[9] },
-		{ "color10",      STRING,  &colorname[10] },
-		{ "color11",      STRING,  &colorname[11] },
-		{ "color12",      STRING,  &colorname[12] },
-		{ "color13",      STRING,  &colorname[13] },
-		{ "color14",      STRING,  &colorname[14] },
-		{ "color15",      STRING,  &colorname[15] },
-		{ "background",   STRING,  &colorname[258] },
-		{ "foreground",   STRING,  &colorname[259] },
-		{ "cursorColor",  STRING,  &colorname[256] },
-		{ "termname",     STRING,  &termname },
-		{ "shell",        STRING,  &shell },
-		{ "minlatency",   INTEGER, &minlatency },
-		{ "maxlatency",   INTEGER, &maxlatency },
-		{ "blinktimeout", INTEGER, &blinktimeout },
-		{ "bellvolume",   INTEGER, &bellvolume },
-		{ "tabspaces",    INTEGER, &tabspaces },
-		{ "borderpx",     INTEGER, &borderpx },
-		{ "cwscale",      FLOAT,   &cwscale },
-		{ "chscale",      FLOAT,   &chscale },
-		{ "alpha",        FLOAT,   &alpha },
-		{ "alphaOffset",  FLOAT,   &alphaOffset },
-};
+/* Internal keyboard shortcuts. */
+#define MODKEY Mod1Mask
+#define TERMMOD (Mod1Mask|ShiftMask)
 
 /*
  * Internal mouse shortcuts.
@@ -235,22 +222,14 @@ ResourcePref resources[] = {
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
-	{ XK_NO_MOD,            Button4, kscrollup,      {.i = 1} },
-	{ XK_NO_MOD,            Button5, kscrolldown,    {.i = 1} },
+	{ TERMMOD,              Button3, previewimage,   {.s = "feh"} },
+	{ TERMMOD,              Button2, showimageinfo,  {},            1 },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
 	{ ShiftMask,            Button5, ttysend,        {.s = "\033[6;2~"} },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
 };
-
-/* Internal keyboard shortcuts. */
-#define MODKEY Mod1Mask
-#define TERMMOD (Mod1Mask|ShiftMask)
-
-static char *openurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -o", "externalpipe", NULL };
-static char *copyurlcmd[] = { "/bin/sh", "-c", "st-urlhandler -c", "externalpipe", NULL };
-static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
@@ -261,34 +240,25 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
 	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
 	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
-	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
-	{ TERMMOD,              XK_V,           clippaste,      {.i =  0} },
 	{ MODKEY,               XK_c,           clipcopy,       {.i =  0} },
-	{ ShiftMask,            XK_Insert,      clippaste,      {.i =  0} },
 	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
+	{ ShiftMask,            XK_Insert,      clippaste,      {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
-	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
-	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
-	{ MODKEY,               XK_Page_Up,     kscrollup,      {.i = -1} },
-	{ MODKEY,               XK_Page_Down,   kscrolldown,    {.i = -1} },
+
 	{ MODKEY,               XK_k,           kscrollup,      {.i =  1} },
-	{ MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
-	{ MODKEY,               XK_Up,          kscrollup,      {.i =  1} },
-	{ MODKEY,               XK_Down,        kscrolldown,    {.i =  1} },
+    { MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
 	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
-	{ MODKEY,		        XK_a,   		changealpha,	{.f = -0.05} },
-	{ MODKEY,		        XK_s,   		changealpha,	{.f = +0.05} },
-	{ TERMMOD,              XK_Up,          zoom,           {.f = +1} },
-	{ TERMMOD,              XK_Down,        zoom,           {.f = -1} },
-	{ TERMMOD,              XK_K,           zoom,           {.f = +1} },
-	{ TERMMOD,              XK_J,           zoom,           {.f = -1} },
-	{ TERMMOD,              XK_U,           zoom,           {.f = +2} },
-	{ TERMMOD,              XK_D,           zoom,           {.f = -2} },
-	{ MODKEY,               XK_l,           externalpipe,   {.v = openurlcmd } },
-	{ MODKEY,               XK_y,           externalpipe,   {.v = copyurlcmd } },
-	{ MODKEY,               XK_o,           externalpipe,   {.v = copyoutput } },
+    { MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
+
+	{ TERMMOD,              XK_F1,          togglegrdebug,  {.i =  0} },
+	{ TERMMOD,              XK_F6,          dumpgrstate,    {.i =  0} },
+	{ TERMMOD,              XK_F7,          unloadimages,   {.i =  0} },
+	{ TERMMOD,              XK_F8,          toggleimages,   {.i =  0} },
+
+	{ MODKEY,               XK_s,           chgalpha,       {.f = -1} }, /* Decrease opacity */
+	{ MODKEY,               XK_a,           chgalpha,       {.f = +1} }, /* Increase opacity */
+	{ MODKEY|ShiftMask,     XK_s,           chgalpha,       {.f =  0} }, /* Reset opacity */
 };
 
 /*
@@ -560,4 +530,3 @@ static char ascii_printable[] =
 	" !\"#$%&'()*+,-./0123456789:;<=>?"
 	"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
 	"`abcdefghijklmnopqrstuvwxyz{|}~";
-
