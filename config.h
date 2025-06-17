@@ -18,8 +18,8 @@ static int borderpx = 0;
  * doesn't perfectly match the size of the window. The values are percentages.
  * 50 means center, 0 means flush left/top, 100 means flush right/bottom.
  */
-static int anysize_halign = 50;
-static int anysize_valign = 50;
+static int anysize_halign = 0;
+static int anysize_valign = 0;
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -167,8 +167,8 @@ static unsigned int cursorshape = 2;
  * Default columns and rows numbers
  */
 
-static unsigned int cols = 130;
-static unsigned int rows = 41;
+static unsigned int cols = 180;
+static unsigned int rows = 50;
 
 /*
  * Default colour and shape of the mouse cursor
