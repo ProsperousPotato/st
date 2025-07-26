@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 
-static char *font = "Terminess Nerd Font Mono:pixelsize=14:antialias=true:autohint=true";
+static char *font = "Terminus:pixelsize=14:antialias=true:autohint=true";
 
 // static char *font = "-misc-fixed-medium-r-semicondensed-*-13-100-100-100-c-60-iso8859-*";
 
@@ -16,13 +16,6 @@ int disableitalic = 1;
 int disableroman = 1;
 
 static int borderpx = 0;
-
-/* How to align the content in the window when the size of the terminal
- * doesn't perfectly match the size of the window. The values are percentages.
- * 50 means center, 0 means flush left/top, 100 means flush right/bottom.
- */
-static int anysize_halign = 0;
-static int anysize_valign = 0;
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -144,7 +137,7 @@ static const char *colorname[] = {
 	"#cccccc",
 	"#555555",
 	"gray90", /* default foreground colour */
-	"#191970", /* default background colour */
+	"#000000", /* default background colour */
 };
 
 
@@ -225,8 +218,6 @@ static uint forcemousemod = ShiftMask;
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
-	{ TERMMOD,              Button3, previewimage,   {.s = "feh"} },
-	{ TERMMOD,              Button2, showimageinfo,  {},            1 },
 	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
 	{ ShiftMask,            Button4, ttysend,        {.s = "\033[5;2~"} },
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
@@ -250,14 +241,9 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
 
 	{ MODKEY,               XK_k,           kscrollup,      {.i =  1} },
-    { MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
+    	{ MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
 	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-    { MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
-
-	{ TERMMOD,              XK_F1,          togglegrdebug,  {.i =  0} },
-	{ TERMMOD,              XK_F6,          dumpgrstate,    {.i =  0} },
-	{ TERMMOD,              XK_F7,          unloadimages,   {.i =  0} },
-	{ TERMMOD,              XK_F8,          toggleimages,   {.i =  0} },
+    	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
 
 	{ MODKEY,               XK_s,           chgalpha,       {.f = -1} }, /* Decrease opacity */
 	{ MODKEY,               XK_a,           chgalpha,       {.f = +1} }, /* Increase opacity */
