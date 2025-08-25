@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 
-static char *font = "Terminus:pixelsize=14:antialias=true:autohint=true";
+static char *font = "Terminess Nerd Font Mono:pixelsize=14:antialias=true:autohint=true";
 
 // static char *font = "-misc-fixed-medium-r-semicondensed-*-13-100-100-100-c-60-iso8859-*";
 
@@ -213,8 +213,7 @@ static uint forcemousemod = ShiftMask;
 #define TERMMOD (Mod1Mask|ShiftMask)
 
 /*
- * Internal mouse shortcuts.
- * Beware that overloading Button1 will disable the selection.
+ * Internal mouse shortcuts. Beware that overloading Button1 will disable the selection.
  */
 static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
@@ -231,19 +230,14 @@ static Shortcut shortcuts[] = {
 	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
 	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
 	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
-	{ TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
-	{ TERMMOD,              XK_Next,        zoom,           {.f = -1} },
+	{ TERMMOD,              XK_K,           zoom,           {.f = +1} },
+	{ TERMMOD,              XK_J,           zoom,           {.f = -1} },
 	{ TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
 	{ MODKEY,               XK_c,           clipcopy,       {.i =  0} },
 	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
 	{ ShiftMask,            XK_Insert,      clippaste,      {.i =  0} },
 	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
-
-	{ MODKEY,               XK_k,           kscrollup,      {.i =  1} },
-    	{ MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
-	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-    	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
 
 	{ MODKEY,               XK_s,           chgalpha,       {.f = -1} }, /* Decrease opacity */
 	{ MODKEY,               XK_a,           chgalpha,       {.f = +1} }, /* Increase opacity */
