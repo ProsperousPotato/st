@@ -6,9 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 
-static char *font = "Terminess Nerd Font Mono:pixelsize=14:antialias=true:autohint=true";
-
-// static char *font = "-misc-fixed-medium-r-semicondensed-*-13-100-100-100-c-60-iso8859-*";
+static char *font = "-misc-fixed-medium-r-semicondensed-*-14-100-*-100-*-60-iso8859-*:pixelsize=14";
 
 /* disable bold, italic and roman fonts globally */
 int disablebold = 1;
