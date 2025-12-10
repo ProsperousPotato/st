@@ -1,5 +1,2 @@
-boxdraw.o
-hb.o
+*.o
 st
-st.o
-x.o
